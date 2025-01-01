@@ -326,7 +326,7 @@
           document.getElementById("confirmOrderButton");
 
         try {
-          const response = await fetch("http://localhost:5001/api/materials");
+          const response = await fetch("/api/materials");
           if (!response.ok) throw new Error("Failed to fetch materials.");
           materials = await response.json();
 
@@ -374,7 +374,7 @@
 
             try {
               const orderResponse = await fetch(
-                "http://localhost:5001/api/orders",
+                "/api/orders",
                 {
                   method: "POST",
                   headers: {
