@@ -610,6 +610,11 @@ app.delete('/api/gallery/:id', async (req, res) => {
 
 // Start the server
 const PORT = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('<h1>Welcome to My App!</h1>'); // แสดงข้อความในหน้าเว็บหลัก
+})
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
