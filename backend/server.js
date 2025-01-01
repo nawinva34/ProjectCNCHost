@@ -611,12 +611,12 @@ app.delete('/api/gallery/:id', async (req, res) => {
 // Start the server
 const PORT = process.env.PORT || 3000;
 
-// ให้ Express เสิร์ฟไฟล์ static จากโฟลเดอร์ frontend
-app.use(express.static(path.join(__dirname, 'frontend')));
+// เสิร์ฟไฟล์ static จากโฟลเดอร์ frontend
+app.use(express.static(path.resolve(__dirname, '..', 'frontend')));
 
 // เสิร์ฟไฟล์ promotion.html เมื่อเข้าถึง path '/'
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'promotion.html'));
+  res.sendFile(path.resolve(__dirname, '..', 'frontend', 'promotion.html'));
 });
 
 app.listen(PORT, () => {
