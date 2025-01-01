@@ -186,7 +186,7 @@
           try {
             // Fetch order details using the orderId
             const response = await fetch(
-              `http://localhost:5001/api/orders/${orderId}`
+              `https://projectcnchost.onrender.com/api/orders/${orderId}`
             );
             const order = await response.json();
 
