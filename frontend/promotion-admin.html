@@ -286,7 +286,7 @@
             card.classList.add("col-md-4", "mb-4");
             card.innerHTML = `
               <div class="card h-100 shadow-sm">
-                <img src="https://projectcnchost.onrender.com/${promotion.image}" class="card-img-top" style="height: 200px" alt="${promotion.title}" />
+                <img src="/${promotion.image}" class="card-img-top" style="height: 200px" alt="${promotion.title}" />
                 <div class="card-body">
                   <h5 class="card-title text-primary">${promotion.title}</h5>
                   <p class="card-text">${promotion.description}</p>
@@ -312,8 +312,8 @@
 
           const method = promotionId ? "PUT" : "POST";
           const url = promotionId
-            ? `https://projectcnchost.onrender.com/api/promotions/${promotionId}`
-            : "https://projectcnchost.onrender.com/api/promotions";
+            ? `/api/promotions/${promotionId}`
+            : "/api/promotions";
 
           try {
             const response = await fetch(url, {
@@ -335,7 +335,7 @@
         window.editPromotion = async function (id) {
           try {
             const response = await fetch(
-              `https://projectcnchost.onrender.com/api/promotions/${id}`
+              `/api/promotions/${id}`
             );
             if (!response.ok) throw new Error("Failed to fetch promotion");
 
@@ -359,7 +359,7 @@
 
           try {
             const response = await fetch(
-              `https://projectcnchost.onrender.com/api/promotions/${id}`,
+              `/api/promotions/${id}`,
               { method: "DELETE" }
             );
             if (!response.ok) throw new Error("Failed to delete promotion");

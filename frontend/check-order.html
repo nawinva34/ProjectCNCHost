@@ -154,7 +154,7 @@
         async function fetchOrders() {
           try {
             const response = await fetch(
-              `https://projectcnchost.onrender.com/api/orders/user/${userEmail}`
+              `/api/orders/user/${userEmail}`
             );
             if (!response.ok) throw new Error("Network response was not ok");
             const orders = await response.json();

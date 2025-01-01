@@ -224,7 +224,7 @@
         async function fetchPromotions() {
           try {
             const response = await fetch(
-              "https://projectcnchost.onrender.com/api/promotions"
+              "/api/promotions"
             );
             if (!response.ok) throw new Error("Network response was not ok");
             const promotions = await response.json();
@@ -243,7 +243,7 @@
             card.classList.add("col-md-4", "mb-4");
             card.innerHTML = `
               <div class="card h-100 shadow-sm">
-                <img src="https://projectcnchost.onrender.com/${promotion.image}" class="card-img-top" style="height: 200px" alt="${promotion.title}" />
+                <img src="/${promotion.image}" class="card-img-top" style="height: 200px" alt="${promotion.title}" />
                 <div class="card-body">
                   <h5 class="card-title text-primary">${promotion.title}</h5>
                   <p class="card-text">${promotion.description}</p>

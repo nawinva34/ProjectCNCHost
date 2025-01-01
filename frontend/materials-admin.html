@@ -213,7 +213,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         async function fetchMaterials() {
           try {
-            const response = await fetch("https://projectcnchost.onrender.com/api/materials");
+            const response = await fetch("/api/materials");
             if (!response.ok) throw new Error("Network response was not ok");
             const materials = await response.json();
             displayMaterials(materials);
@@ -232,7 +232,7 @@
             card.classList.add("col-md-4", "mb-4");
             card.innerHTML = `
               <div class="card h-100 shadow-sm">
-                <img src="https://projectcnchost.onrender.com/${material.image}" class="card-img-top" style="height: 200px" alt="${material.name}" />
+                <img src="/${material.image}" class="card-img-top" style="height: 200px" alt="${material.name}" />
                 <div class="card-body">
                   <h5 class="card-title text-primary">${material.name}</h5>
                   <h5 class="card-text">ขนาด : ${material.size}</h5>
@@ -267,8 +267,8 @@
 
           const method = materialId ? "PUT" : "POST";
           const url = materialId
-            ? `https://projectcnchost.onrender.com/api/materials/${materialId}`
-            : "https://projectcnchost.onrender.com/api/materials";
+            ? `/api/materials/${materialId}`
+            : "/api/materials";
 
           try {
             const response = await fetch(url, {
@@ -290,7 +290,7 @@
         window.editMaterial = async function (id) {
           try {
             const response = await fetch(
-              `https://projectcnchost.onrender.com/api/materials/${id}`
+              `/api/materials/${id}`
             );
             if (!response.ok) throw new Error("Failed to fetch material");
 
@@ -316,7 +316,7 @@
 
           try {
             const response = await fetch(
-              `https://projectcnchost.onrender.com/api/materials/${id}`,
+              `/api/materials/${id}`,
               { method: "DELETE" }
             );
             if (!response.ok) throw new Error("Failed to delete material");

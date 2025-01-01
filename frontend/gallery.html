@@ -150,7 +150,7 @@
 
         async function fetchGalleryItems() {
           try {
-            const response = await fetch("https://projectcnchost.onrender.com/api/gallery");
+            const response = await fetch("/api/gallery");
             if (!response.ok) throw new Error("Network response was not ok");
             const galleryItems = await response.json();
             displayGalleryItems(galleryItems);
@@ -169,7 +169,7 @@
             card.classList.add("col-md-4", "mb-4");
             card.innerHTML = `
             <div class="card h-100 shadow-sm">
-              <img src="https://projectcnchost.onrender.com/${item.img}" class="card-img-top" style="height: 200px" alt="${item.title}" />
+              <img src="/${item.img}" class="card-img-top" style="height: 200px" alt="${item.title}" />
               <div class="card-body">
                 <h5 class="card-title text-primary">${item.title}</h5>
                 <p class="card-text">${item.description}</p>
