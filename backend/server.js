@@ -616,7 +616,7 @@ app.use(express.static(path.resolve(__dirname, '..', 'frontend')));
 
 // เสิร์ฟไฟล์ promotion.html เมื่อเข้าถึง path '/'
 app.get('/', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '..', 'frontend', 'promotion.html'));
+  res.sendFile(path.resolve(__dirname, '..', 'frontend', 'gallery.html'));
 });
 
 app.listen(PORT, () => {
