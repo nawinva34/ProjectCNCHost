@@ -17,7 +17,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // การเชื่อมต่อ MongoDB
 mongoose
-.connect("mongodb+srv://project:123456_Parn@projectcnc.8ljbk.mongodb.net/", {useNewUrlParser: true,useUnifiedTopology: true})
+.connect("mongodb+srv://project:123456_Parn@projectcnc.8ljbk.mongodb.net/", {})
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
