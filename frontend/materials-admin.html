@@ -243,8 +243,10 @@
                   <h6 class="card-text">หนา : ${material.thickness}</h6>
                   <h6 class="card-text">ราคา : ${material.price} บาท</h6>
                   <p class="card-text">${material.description}</p>
-                  <button onclick="editMaterial('${material._id}')" class="btn btn-warning btn-sm">แก้ไข</button>
-                  <button onclick="deleteMaterial('${material._id}')" class="btn btn-danger btn-sm">ลบ</button>
+                  <div style="text-align: right;">
+                    <button onclick="editMaterial('${material._id}')" class="btn btn-warning btn-sm">แก้ไข</button>
+                    <button onclick="deleteMaterial('${material._id}')" class="btn btn-danger btn-sm">ลบ</button>
+                  </div>
                 </div>
               </div>`;
             materialCardsContainer.appendChild(card);
