@@ -39,6 +39,7 @@ footer {
 }
 
 nav, header {
+    font-size: 1.2rem;
     background-color: #111175;
 }
 

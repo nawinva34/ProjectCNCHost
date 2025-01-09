@@ -115,16 +115,18 @@
       <h1>วัสดุที่สามารถใช้ในงาน</h1>
     </header>
 
-    <div class="container mt-5" style="text-align: right;">
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#addMaterialModal"
-        onclick="resetForm()"
-      >
-        เพิ่ม วัสดุใหม่
-      </button>
+    <div class="container mt-5">
+      <div style="text-align: right;">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#addMaterialModal"
+          onclick="resetForm()"
+        >
+          เพิ่ม วัสดุใหม่
+        </button>
+      </div>
 
       <div
         class="modal fade"
@@ -193,9 +195,11 @@
                     accept="image/*"
                   />
                 </div>
-                <button type="submit" class="btn btn-primary">
-                  บันทึกวัสดุ
-                </button>
+                <div style="text-align: right;">
+                  <button type="submit" class="btn btn-primary">
+                    บันทึกวัสดุ
+                  </button>
+                </div>
               </form>
             </div>
           </div>
