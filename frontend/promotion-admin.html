@@ -191,15 +191,17 @@
     </div>
 
     <div class="container mt-5">
-      <button
-        type="button"
-        class="btn btn-primary mb-4"
-        data-bs-toggle="modal"
-        data-bs-target="#addPromotionModal"
-        onclick="resetForm()"
-      >
-        เพิ่มโปรโมชั่นใหม่
-      </button>
+      <div style="text-align: right;">
+        <button
+          type="button"
+          class="btn btn-primary mb-4"
+          data-bs-toggle="modal"
+          data-bs-target="#addPromotionModal"
+          onclick="resetForm()"
+        >
+          เพิ่มโปรโมชั่นใหม่
+        </button>
+      </div>
 
       <div
         class="modal fade"
@@ -246,9 +248,11 @@
                     accept="image/*"
                   />
                 </div>
-                <button type="submit" class="btn btn-primary">
-                  บันทึกโปรโมชั่น
-                </button>
+                <div style="text-align: right;">
+                  <button type="submit" class="btn btn-primary" style="background-color: #28a745; border: none;">
+                    บันทึกโปรโมชั่น
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -285,13 +289,15 @@
             const card = document.createElement("div");
             card.classList.add("col-md-4", "mb-4");
             card.innerHTML = `
-              <div class="card h-100 shadow-sm">
+              <div class="card h-100 shadow-sm d-flex flex-column">
                 <img src="/${promotion.image}" class="card-img-top" style="height: 200px" alt="${promotion.title}" />
-                <div class="card-body">
+                <div class="card-body justify-content-between">
                   <h5 class="card-title text-primary">${promotion.title}</h5>
                   <p class="card-text">${promotion.description}</p>
-                  <button onclick="editPromotion('${promotion._id}')" class="btn btn-warning btn-sm">แก้ไข</button>
-                  <button onclick="deletePromotion('${promotion._id}')" class="btn btn-danger btn-sm">ลบ</button>
+                  <div class="mt-auto" style="text-align: right;">
+                    <button onclick="editPromotion('${promotion._id}')" class="btn btn-warning btn-sm">แก้ไข</button>
+                    <button onclick="deletePromotion('${promotion._id}')" class="btn btn-danger btn-sm">ลบ</button>
+                  </div>
                 </div>
               </div>`;
             promotionCardsContainer.appendChild(card);
