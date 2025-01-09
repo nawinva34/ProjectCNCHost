@@ -120,15 +120,17 @@
 
     <!-- Add Gallery Item Button -->
     <div class="container mt-5">
-      <button
-        type="button"
-        class="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#addGalleryItemModal"
-        onclick="resetForm()"
-      >
-        เพิ่มผลงานใหม่
-      </button>
+      <div style="text-align: right;">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#addGalleryItemModal"
+          onclick="resetForm()"
+        >
+          เพิ่มผลงานใหม่
+        </button>
+      </div>
     </div>
 
     <!-- Modal for Adding/Editing Gallery Item -->
@@ -177,7 +179,9 @@
                   accept="image/*"
                 />
               </div>
-              <button type="submit" class="btn btn-primary">บันทึกผลงาน</button>
+              <div style="text-align: right;">
+                <button type="submit" class="btn btn-primary">บันทึกผลงาน</button>
+              </div>
             </form>
           </div>
         </div>
@@ -213,13 +217,15 @@
             const card = document.createElement("div");
             card.classList.add("col-md-4", "mb-4");
             card.innerHTML = `
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm d-flex flex-column">
               <img src="/${item.img}" class="card-img-top" style="height: 200px" alt="${item.title}" />
-              <div class="card-body">
+              <div class="card-body justify-content-between">
                 <h5 class="card-title text-primary">${item.title}</h5>
                 <p class="card-text">${item.description}</p>
-                <button onclick="editGalleryItem('${item._id}')" class="btn btn-warning btn-sm">แก้ไข</button>
-                <button onclick="deleteGalleryItem('${item._id}')" class="btn btn-danger btn-sm">ลบ</button>
+                <div class="mt-auto" style="text-align: right;">
+                  <button onclick="editGalleryItem('${item._id}')" class="btn btn-warning btn-sm">แก้ไข</button>
+                  <button onclick="deleteGalleryItem('${item._id}')" class="btn btn-danger btn-sm">ลบ</button>
+                </div>
               </div>
             </div>`;
             galleryItemsContainer.appendChild(card);
