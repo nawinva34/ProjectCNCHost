@@ -191,7 +191,7 @@
               order._id
             }" data-bs-parent="#orders-container">
                                     <div class="accordion-body">
-                                      <p>สถานะ : <strong>${
+                                      <p>สถานะ : <strong class="status" >${
                                         order.status
                                       }</strong></p>
                                       <ul>
@@ -211,7 +211,7 @@
 
             stepper.innerHTML = orderStatusStep;
             ordersContainer.appendChild(stepper);
-            
+
             const statusElement = document.querySelector('.status');
             const status = statusElement.textContent.trim();
 
