@@ -60,17 +60,17 @@ nav, header {
 }
 
 .status-ได้รับคำสั่งซื้อ {
-    color: gray;
+    color: rgb(122, 122, 122);
 }
 .status-กำลังดำเนินการ {
-    color: orange;
+    color: rgb(255, 166, 0);
 }
 .status-กำลังจัดส่ง {
-    color: blue;
+    color: rgb(0, 0, 255);
 }
 .status-กำลังนำส่ง {
-    color: purple;
+    color: rgb(143, 0, 143);
 }
 .status-จัดส่งเรียบร้อย {
-    color: green;
+    color: rgb(0, 233, 0);
 }
