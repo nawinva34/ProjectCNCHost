@@ -186,6 +186,17 @@
           ordersContainer.innerHTML = "";
 
           orders.forEach((order) => {
+            const statusClasses = {
+              "ได้รับคำสั่งซื้อ": "status-ได้รับคำสั่งซื้อ",
+              "กำลังดำเนินการ": "status-กำลังดำเนินการ",
+              "กำลังจัดส่ง": "status-กำลังจัดส่ง",
+              "กำลังนำส่ง": "status-กำลังนำส่ง",
+              "จัดส่งเรียบร้อย": "status-จัดส่งเรียบร้อย",
+            };
+            const statusClass = statusClasses[order.status.trim()] || "";
+
+
+            
             const stepper = document.createElement("div");
             stepper.classList.add("accordion");
 
@@ -207,7 +218,7 @@
               order._id
             }" data-bs-parent="#orders-container">
                                     <div class="accordion-body">
-                                      <p>สถานะ : <strong class="status" >${
+                                      <p>สถานะ : <strong class="status ${statusClass}" >${
                                         order.status
                                       }</strong></p>
                                       <ul>
@@ -227,23 +238,6 @@
 
             stepper.innerHTML = orderStatusStep;
             ordersContainer.appendChild(stepper);
-
-            const statusElement = document.querySelector('.status');
-            const status = statusElement.textContent.trim();
-
-            const statusClasses = {
-              "ได้รับคำสั่งซื้อ": "status-ได้รับคำสั่งซื้อ",
-              "กำลังดำเนินการ": "status-กำลังดำเนินการ",
-              "กำลังจัดส่ง": "status-กำลังจัดส่ง",
-              "กำลังนำส่ง": "status-กำลังนำส่ง",
-              "จัดส่งเรียบร้อย": "status-จัดส่งเรียบร้อย",
-            };
-
-            const statusClass = statusClasses[status];
-            if (statusClass) {
-              statusElement.classList.add(statusClass);
-            }
-
           });
         }
 
