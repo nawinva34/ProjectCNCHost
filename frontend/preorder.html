@@ -126,27 +126,21 @@
               </h3>
               <form id="preorderForm">
                 <div class="mb-3">
-                  <label for="name" class="form-label"
-                    >ชื่อ - นามสกุล <span class="text-danger">*</span></label
-                  >
+                  <label for="name" class="form-label">ชื่อ - นามสกุล <span class="text-danger"></span></label>
                   <input
                     type="text"
                     class="form-control"
                     id="name"
-                    placeholder="ชื่อ นามสกุล"
-                    required
+                    readonly
                   />
                 </div>
                 <div class="mb-3">
-                  <label for="email" class="form-label"
-                    >อีเมล <span class="text-danger">*</span></label
-                  >
+                  <label for="email" class="form-label">อีเมล <span class="text-danger"></span></label>
                   <input
                     type="email"
                     class="form-control"
                     id="email"
-                    placeholder="name@gmail.com"
-                    required
+                    readonly
                   />
                 </div>
                 <div class="mb-3">
@@ -213,14 +207,8 @@
                 <div class="mb-3">
                   <label for="payment" class="form-label"
                     >ช่องทางการชำระเงิน
-                    <span class="text-danger">*</span></label
-                  >
-                  <select class="form-select" id="payment" required>
-                    <option value="" disabled selected>
-                      กรุณาเลือกช่องทางการชำระเงิน
-                    </option>
-                    <option value="bank_transfer">โอนผ่านธนาคาร</option>
-                  </select>
+                  </label>
+                  <input type="text" class="form-control" id="payment" value="โอนผ่านธนาคาร" readonly>
                 </div>
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary">
@@ -313,7 +301,7 @@
         } else {
           userNameElement.textContent = userName;
           loginButton.style.display = "none";
-          logoutButton.style.display = "block";
+          logoutButton.style.display = "block";   
         }
 
         const materialSelect = document.getElementById("material");
@@ -410,7 +398,24 @@
           event.preventDefault();
           localStorage.clear();
           window.location.href = "login.html";
-        });
+      
+      });
+      document.addEventListener("DOMContentLoaded", async () => {    
+        // ดึงข้อมูลชื่อและอีเมลจาก localStorage
+        const name = localStorage.getItem("name");
+        const email = localStorage.getItem("email");
+
+        // ตั้งค่าชื่อและอีเมลในฟอร์ม
+        const nameField = document.getElementById("name");
+        const emailField = document.getElementById("email");
+
+        if (name) {
+          nameField.value = name;
+        }
+        if (email) {
+          emailField.value = email;
+        }
+      });
     </script>
 
     <!-- Bootstrap JS -->

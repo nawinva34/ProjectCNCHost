@@ -232,6 +232,10 @@
                                           .join("")}
                                       </ul>
                                       <p>ราคารวม : ${order.totalPrice} บาท</p>
+                                      <div class="button-container text-end">
+                                        <button class="btn btn-success" onclick="confirmOrder('${order._id}')">ยืนยัน</button>
+                                        <button class="btn btn-danger" onclick="cancelOrder('${order._id}')">ยกเลิก</button>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>`;
