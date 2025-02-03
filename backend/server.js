@@ -17,7 +17,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // การเชื่อมต่อ MongoDB
 mongoose
-.connect("mongodb+srv://project:123456_Parn@projectcnc.8ljbk.mongodb.net/", {})
+  .connect("mongodb+srv://project:123456_Parn@projectcnc.8ljbk.mongodb.net/", {})
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -306,8 +306,63 @@ app.delete("/api/materials/:id", async (req, res) => {
 });
 
 // Order Create API
-app.post("/api/orders", async (req, res) => {
+// app.post("/api/orders", async (req, res) => {
+//   const { materialId, name, email, phone, quantity, notes, address } = req.body;
+
+//   const material = await Material.findById(materialId);
+
+//   if (!material) {
+//     return res.status(400).json({ message: "Invalid material ID" });
+//   }
+
+//   if (!name || !phone || quantity <= 0) {
+//     return res.status(400).json({
+//       message: "All fields are required, and quantity must be greater than zero.",
+//     });
+//   }
+
+//   const totalPrice = material.price * quantity;
+
+//   const newOrder = new Order({
+//     items: [
+//       {
+//         productId: material._id,
+//         productName: material.name,
+//         size: material.size,
+//         thickness: material.thickness,
+//         quantity: quantity,
+//         price: material.price,
+//       },
+//     ],
+//     userDetails: [
+//       {
+//         Username: name,
+//         UserEmail: email,
+//         UserPhone: phone,
+//         UserNotes: notes,
+//         UserAddress: address,
+//       },
+//     ],
+//     totalPrice: totalPrice,
+//   });
+
+//   try {
+//     await newOrder.save();
+//     res.status(201).json({ message: "Order created successfully!", order: newOrder });
+//   } catch (error) {
+//     console.error("Order creation error:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+app.post("/api/orders", upload.single('aiFile'), async (req, res) => {
   const { materialId, name, email, phone, quantity, notes, address } = req.body;
+
+
+  const aiFile = req.file;
+
+  if (!aiFile) {
+    return res.status(400).json({ message: "No .ai file uploaded." });
+  }
 
   const material = await Material.findById(materialId);
 
@@ -344,6 +399,7 @@ app.post("/api/orders", async (req, res) => {
       },
     ],
     totalPrice: totalPrice,
+    aiFilePath: aiFile.path,
   });
 
   try {
@@ -551,7 +607,7 @@ app.post('/api/gallery', upload.single('img'), async (req, res) => {
 // Get All Gallery Items
 app.get('/api/gallery', async (req, res) => {
   try {
-    const galleryItems = await Gallery.find() ;
+    const galleryItems = await Gallery.find();
     res.json(galleryItems);
   } catch (error) {
     console.error("Error fetching gallery items:", error);

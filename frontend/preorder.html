@@ -126,16 +126,15 @@
               </h3>
               <form id="preorderForm">
                 <div class="mb-3">
-                  <label for="name" class="form-label">ชื่อ - นามสกุล <span class="text-danger"></span></label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="name"
-                    readonly
-                  />
+                  <label for="name" class="form-label"
+                    >ชื่อ - นามสกุล <span class="text-danger"></span
+                  ></label>
+                  <input type="text" class="form-control" id="name" readonly />
                 </div>
                 <div class="mb-3">
-                  <label for="email" class="form-label">อีเมล <span class="text-danger"></span></label>
+                  <label for="email" class="form-label"
+                    >อีเมล <span class="text-danger"></span
+                  ></label>
                   <input
                     type="email"
                     class="form-control"
@@ -204,11 +203,25 @@
                     placeholder="กรุณาระบุที่อยู่"
                   ></textarea>
                 </div>
+                <div>
+                  <label for="aiFile" class="form-label"
+                    >ไฟล์งาน *AI <span class="text-danger">*</span></label
+                  >
+                  <!-- <form id="aiFile" enctype="multipart/form-data"> -->
+                  <input type="file" id="aiFile" name="aiFile" accept=".ai" />
+                  <!-- </form> -->
+                </div>
                 <div class="mb-3">
                   <label for="payment" class="form-label"
                     >ช่องทางการชำระเงิน
                   </label>
-                  <input type="text" class="form-control" id="payment" value="โอนผ่านธนาคาร" readonly>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="payment"
+                    value="โอนผ่านธนาคาร"
+                    readonly
+                  />
                 </div>
                 <div class="text-center">
                   <button type="submit" class="btn btn-primary">
@@ -301,7 +314,7 @@
         } else {
           userNameElement.textContent = userName;
           loginButton.style.display = "none";
-          logoutButton.style.display = "block";   
+          logoutButton.style.display = "block";
         }
 
         const materialSelect = document.getElementById("material");
@@ -314,7 +327,7 @@
           document.getElementById("confirmOrderButton");
 
         try {
-          const response = await fetch("/api/materials");
+          const response = await fetch("http://localhost:5001/api/materials");
           if (!response.ok) throw new Error("Failed to fetch materials.");
           materials = await response.json();
 
@@ -329,6 +342,67 @@
           console.error("Error loading materials:", error);
         }
 
+        // preorderForm.addEventListener("submit", async (e) => {
+        //   e.preventDefault();
+        //   const name = document.getElementById("name").value;
+        //   const email = document.getElementById("email").value;
+        //   const phone = document.getElementById("phone").value;
+        //   const materialId = document.getElementById("material").value;
+        //   const quantity = document.getElementById("quantity").value;
+        //   const notes = document.getElementById("notes").value;
+        //   const address = document.getElementById("address").value;
+        //   const paymentMethod = document.getElementById("payment").value;
+
+        //   const selectedMaterial = materials.find(
+        //     (material) => material._id === materialId
+        //   );
+        //   const totalPrice = selectedMaterial.price * quantity;
+        //   orderTotalPriceSpan.textContent = totalPrice;
+
+        //   confirmationModal.show();
+
+        //   confirmOrderButton.addEventListener("click", async () => {
+        //     const orderData = {
+        //       name,
+        //       email,
+        //       phone,
+        //       materialId,
+        //       quantity,
+        //       notes,
+        //       address,
+        //       paymentMethod,
+        //     };
+
+        //     try {
+        //       const orderResponse = await fetch(
+        //         "http://localhost:5001/api/orders",
+        //         {
+        //           method: "POST",
+        //           headers: {
+        //             "Content-Type": "application/json",
+        //           },
+        //           body: JSON.stringify(orderData),
+        //         }
+        //       );
+
+        //       if (!orderResponse.ok) throw new Error("Failed to create order.");
+        //       const responseData = await orderResponse.json();
+        //       const orderId = responseData.order._id; // assuming the response has { orderId: "some_id" }
+
+        //       // Save orderId to localStorage
+        //       localStorage.setItem("orderId", orderId);
+        //       console.log(responseData);
+
+        //       alert("คำสั่งทำสำเร็จ!");
+        //       confirmationModal.hide();
+        //       window.location.href = "money.html";
+        //     } catch (error) {
+        //       console.error("Error submitting order:", error);
+        //       alert("เกิดข้อผิดพลาดในการสั่งทำ");
+        //       confirmationModal.hide();
+        //     }
+        //   });
+        // });
         preorderForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           const name = document.getElementById("name").value;
@@ -339,6 +413,11 @@
           const notes = document.getElementById("notes").value;
           const address = document.getElementById("address").value;
           const paymentMethod = document.getElementById("payment").value;
+
+          const aiFileInput = document.getElementById("aiFile");
+          const aiFile = aiFileInput.files[0];
+
+          console.log(aiFile);
 
           const selectedMaterial = materials.find(
             (material) => material._id === materialId
@@ -360,23 +439,25 @@
               paymentMethod,
             };
 
+            const formData = new FormData();
+            formData.append("orderData", JSON.stringify(orderData));
+            if (aiFile) {
+              formData.append("aiFile", aiFile);
+            }
+
             try {
               const orderResponse = await fetch(
-                "/api/orders",
+                "http://localhost:5001/api/orders",
                 {
                   method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify(orderData),
+                  body: formData,
                 }
               );
 
               if (!orderResponse.ok) throw new Error("Failed to create order.");
               const responseData = await orderResponse.json();
-              const orderId = responseData.order._id; // assuming the response has { orderId: "some_id" }
+              const orderId = responseData.order._id;
 
-              // Save orderId to localStorage
               localStorage.setItem("orderId", orderId);
               console.log(responseData);
 
@@ -398,9 +479,8 @@
           event.preventDefault();
           localStorage.clear();
           window.location.href = "login.html";
-      
-      });
-      document.addEventListener("DOMContentLoaded", async () => {    
+        });
+      document.addEventListener("DOMContentLoaded", async () => {
         // ดึงข้อมูลชื่อและอีเมลจาก localStorage
         const name = localStorage.getItem("name");
         const email = localStorage.getItem("email");
