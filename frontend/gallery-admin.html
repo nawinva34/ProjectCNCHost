@@ -120,7 +120,7 @@
 
     <!-- Add Gallery Item Button -->
     <div class="container mt-5">
-      <div style="text-align: right;">
+      <div style="text-align: right">
         <button
           type="button"
           class="btn btn-primary"
@@ -179,7 +179,7 @@
                   accept="image/*"
                 />
               </div>
-              <div style="text-align: right;">
+              <div style="text-align: right">
                 <button type="submit" class="btn btn-primary btn-success">
                   บันทึกผลงาน
                 </button>
@@ -200,7 +200,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         async function fetchGalleryItems() {
           try {
-            const response = await fetch("/api/gallery"); //call API
+            const response = await fetch("http://localhost:5001/api/gallery"); //call API
 
             if (!response.ok) throw new Error("Network response was not ok");
             const galleryItems = await response.json();
@@ -248,8 +248,8 @@
 
           const method = itemId ? "PUT" : "POST";
           const url = itemId
-            ? `/api/gallery/${itemId}`
-            : "/api/gallery";
+            ? `http://localhost:5001/api/gallery/${itemId}`
+            : "http://localhost:5001/api/gallery";
 
           try {
             const response = await fetch(url, {
@@ -271,7 +271,7 @@
         window.editGalleryItem = async function (id) {
           try {
             const response = await fetch(
-              `/api/gallery/${id}`
+              `http://localhost:5001/api/gallery/${id}`
             );
             if (!response.ok) throw new Error("Failed to fetch gallery item");
 
@@ -294,7 +294,7 @@
 
           try {
             const response = await fetch(
-              `/api/gallery/${id}`,
+              `http://localhost:5001/api/gallery/${id}`,
               { method: "DELETE" }
             );
             if (!response.ok) throw new Error("Failed to delete gallery item");

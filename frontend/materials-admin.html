@@ -116,7 +116,7 @@
     </header>
 
     <div class="container mt-5">
-      <div style="text-align: right;">
+      <div style="text-align: right">
         <button
           type="button"
           class="btn btn-primary"
@@ -195,7 +195,7 @@
                     accept="image/*"
                   />
                 </div>
-                <div style="text-align: right;">
+                <div style="text-align: right">
                   <button type="submit" class="btn btn-primary btn-success">
                     บันทึกวัสดุ
                   </button>
@@ -217,7 +217,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         async function fetchMaterials() {
           try {
-            const response = await fetch("/api/materials");
+            const response = await fetch("http://localhost:5001/api/materials");
             if (!response.ok) throw new Error("Network response was not ok");
             const materials = await response.json();
             displayMaterials(materials);
@@ -236,7 +236,7 @@
             card.classList.add("col-md-4", "mb-4");
             card.innerHTML = `
               <div class="card h-100 shadow-sm d-flex flex-column">
-                <img src="/${material.image}" class="card-img-top" style="height: 200px" alt="${material.name}" />
+                <img src="http://localhost:5001/${material.image}" class="card-img-top" style="height: 200px" alt="${material.name}" />
                 <div class="card-body d-flex flex-column justify-content-between">
                   <h5 class="card-title text-primary">${material.name}</h5>
                   <h5 class="card-text">ขนาด : ${material.size}</h5>
@@ -273,8 +273,8 @@
 
           const method = materialId ? "PUT" : "POST";
           const url = materialId
-            ? `/api/materials/${materialId}`
-            : "/api/materials";
+            ? `http://localhost:5001/api/materials/${materialId}`
+            : "http://localhost:5001/api/materials";
 
           try {
             const response = await fetch(url, {
@@ -296,7 +296,7 @@
         window.editMaterial = async function (id) {
           try {
             const response = await fetch(
-              `/api/materials/${id}`
+              `http://localhost:5001/api/materials/${id}`
             );
             if (!response.ok) throw new Error("Failed to fetch material");
 
@@ -322,8 +322,10 @@
 
           try {
             const response = await fetch(
-              `/api/materials/${id}`,
-              { method: "DELETE" }
+              `http://localhost:5001/api/materials/${id}`,
+              {
+                method: "DELETE",
+              }
             );
             if (!response.ok) throw new Error("Failed to delete material");
             fetchMaterials();

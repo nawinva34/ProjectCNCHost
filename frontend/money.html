@@ -51,6 +51,75 @@
       .card:hover {
         transform: none;
       }
+
+      .order-details h4 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+
+      .order-details p {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .order-details ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .order-details ul li {
+        font-size: 1rem;
+        margin-bottom: 5px;
+      }
+
+      .input-section {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .input-section input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        width: 200px;
+      }
+
+      .input-section button {
+        padding: 8px 15px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .input-section button:hover {
+        background-color: #218838;
+      }
+
+      .order-button {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .order-button button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .order-button button:hover {
+        background-color: #0056b3;
+      }
     </style>
 
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -179,19 +248,16 @@
       });
 
       document.addEventListener("DOMContentLoaded", async function () {
-        // Get the order ID from localStorage (assuming it's set in localStorage)
         const orderId = localStorage.getItem("orderId");
 
         if (orderId) {
           try {
-            // Fetch order details using the orderId
             const response = await fetch(
-              `/api/orders/${orderId}`
+              `http://localhost:5001/api/orders/${orderId}`
             );
             const order = await response.json();
 
             if (response.ok) {
-              // Display order details in HTML
               const orderDetails = `
               <h4>ข้อมูลการสั่งทำของคุณ</h4>
               <p><strong>Order ID : </strong> ${order._id}</p>
@@ -213,9 +279,16 @@
                   )
                   .join("")}
               </ul>
-                     <p><strong>ราคาทั้งหมด : </strong>${
-                       order.totalPrice
-                     } บาท</p>
+              <p><strong>ราคาสินค้า : </strong>${order.totalPrice} บาท</p>
+              <p><strong>ราคาประเมิน : </strong>${order.estimatedPrice} บาท</p>
+              <p><strong>ราคารวม : </strong>${order.netPrice} บาท</p>
+              <div class="input-section">
+                <input type="file" id="paymentSlip" accept="image/*" />
+                <button id="uploadSlip" onclick="uploadPaymentSlip()">Upload Payment Slip</button>
+              </div>
+              <div class="order-button">
+                <button onclick="window.location.href='check-order.html'">Check Order Status</button>
+              </div>
             `;
               document.getElementById("orderDetails").innerHTML = orderDetails;
             } else {
@@ -233,6 +306,45 @@
             "<p>Order ID is missing.</p>";
         }
       });
+
+      function uploadPaymentSlip() {
+        const fileInput = document.getElementById("paymentSlip");
+        const file = fileInput.files[0];
+
+        if (!file) {
+          alert("Please select a payment slip image.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("paymentSlip", file);
+
+        fetch(
+          `http://localhost:5001/api/orders/upload-slip/${localStorage.getItem(
+            "orderId"
+          )}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              const uploadedFilePath = data.order.paymentSlip.replace(
+                /^\/+/,
+                ""
+              );
+              alert("Payment slip uploaded successfully.");
+            } else {
+              alert("Failed to upload payment slip.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error uploading payment slip:", error);
+            alert("Error uploading payment slip.");
+          });
+      }
 
       document
         .getElementById("logout-button")

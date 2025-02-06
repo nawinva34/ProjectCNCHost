@@ -150,7 +150,7 @@
 
         async function fetchGalleryItems() {
           try {
-            const response = await fetch("/api/gallery");
+            const response = await fetch("http://localhost:5001/api/gallery");
             if (!response.ok) throw new Error("Network response was not ok");
             const galleryItems = await response.json();
             displayGalleryItems(galleryItems);

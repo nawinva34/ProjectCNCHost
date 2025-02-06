@@ -139,11 +139,13 @@
               <th>ชื่อลูกค้า</th>
               <th>ที่อยู่</th>
               <th>ชื่อสินค้า</th>
-              <th>ขนาด</th>
-              <th>ความหนา</th>
               <th>ระบุ</th>
               <th>จำนวน</th>
+              <th>ราคาวัสดุ</th>
+              <th>ราคาประเมิน</th>
               <th>ราคารวม</th>
+              <th>ไฟล์ AI</th>
+              <th>สลิปโอนเงิน</th>
               <th>สถานะ</th>
               <th>อัพเดทสถานะ</th>
             </tr>
@@ -160,6 +162,8 @@
     <script>
       const statusOptions = [
         "ได้รับคำสั่งซื้อ",
+        "ตรวจสอบไฟล์งาน",
+        "ตรวจสอบการโอนเงิน",
         "กำลังดำเนินการ",
         "กำลังจัดส่ง",
         "กำลังนำส่ง",
@@ -168,7 +172,7 @@
 
       async function fetchOrders() {
         try {
-          const response = await fetch("/api/orders");
+          const response = await fetch("http://localhost:5001/api/orders");
           if (!response.ok) {
             throw new Error("Failed to fetch orders");
           }
@@ -180,31 +184,54 @@
           orders.forEach((order) => {
             order.items.forEach((item) => {
               const row = document.createElement("tr");
+
+              // Calculate the total price (totalPrice + estimatedPrice)
+              const calculatedTotalPrice =
+                order.totalPrice + (order.estimatedPrice || 0);
+
               row.innerHTML = `
-                <td>${order.userDetails[0].Username}</td>
-                <td>${order.userDetails[0].UserAddress}</td>
-                <td>${item.productName}</td>
-                <td>${item.size}</td>
-                <td>${item.thickness}</td>
-                <td>${order.userDetails[0].UserNotes || "N/A"}</td>
-                <td>${item.quantity}</td>
-                <td>${order.totalPrice}</td>
-                <td>${order.status}</td>
-                <td>
-                  <select class="form-select form-select-sm mb-2" onchange="updateOrderStatus('${
-                    order._id
-                  }', this.value)">
-                    ${statusOptions
-                      .map(
-                        (status) =>
-                          `<option value="${status}" ${
-                            order.status === status ? "selected" : ""
-                          }>${status}</option>`
-                      )
-                      .join("")}
-                  </select>
-                </td>
-              `;
+            <td>${order.userDetails[0]?.Username || "N/A"}</td>
+            <td>${order.userDetails[0]?.UserAddress || "N/A"}</td>
+            <td>${item.productName}</td>
+            <td>${order.userDetails[0]?.UserNotes || "N/A"}</td>
+            <td>${item.quantity}</td>
+            <td>${order.totalPrice}</td>
+            <td contenteditable="true" onBlur="updateEstimatedPrice('${
+              order._id
+            }', this.innerText)">
+              ${order.estimatedPrice || "คลิกเพื่อเพิ่มราคา"}
+            </td>
+            <td>${calculatedTotalPrice}</td>
+            <td>
+            ${
+              order.aiFile
+                ? `<a href="http://localhost:5001/${order.aiFile}" target="_blank" download>ไฟล์งาน</a>`
+                : "ไม่มีไฟล์"
+            }
+          </td>
+          <td>
+            ${
+              order.paymentSlip
+                ? `<img src="http://localhost:5001/${order.paymentSlip}" alt="Payment Slip" width="100" />`
+                : "ไม่มีสลิป"
+            }
+          </td>
+            <td>${order.status}</td>
+            <td>
+              <select class="form-select form-select-sm mb-2" onchange="updateOrderStatus('${
+                order._id
+              }', this.value)">
+                ${statusOptions
+                  .map(
+                    (status) =>
+                      `<option value="${status}" ${
+                        order.status === status ? "selected" : ""
+                      }>${status}</option>`
+                  )
+                  .join("")}
+              </select>
+            </td>
+          `;
               orderTableBody.appendChild(row);
             });
           });
@@ -213,25 +240,51 @@
         }
       }
 
-      async function updateOrderStatus(orderId, newStatus) {
+      async function updateOrderStatus(orderId, status) {
         try {
           const response = await fetch(
-            `/api/orders/${orderId}/status`,
+            `http://localhost:5001/api/orders/${orderId}/status`,
             {
               method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ status: newStatus }),
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ status }),
             }
           );
+
           if (!response.ok) {
             throw new Error("Failed to update status");
           }
-          alert("สถานะอัพเดทเรียบร้อยแล้ว");
-          fetchOrders(); // Refresh the order list
+
+          fetchOrders();
         } catch (error) {
           console.error("Error updating order status:", error);
+        }
+      }
+
+      async function updateEstimatedPrice(orderId, newPrice) {
+        try {
+          const price = parseFloat(newPrice);
+          if (isNaN(price)) {
+            alert("กรุณากรอกราคาที่ถูกต้อง");
+            return;
+          }
+
+          const response = await fetch(
+            `http://localhost:5001/api/orders/${orderId}/price`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ estimatedPrice: price }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to update estimated price");
+          }
+
+          fetchOrders();
+        } catch (error) {
+          console.error("Error updating estimated price:", error);
         }
       }
 

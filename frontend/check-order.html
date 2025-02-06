@@ -50,21 +50,21 @@
       .card:hover {
         transform: scale(1.05);
       }
-      
+
       .status-ได้รับคำสั่งซื้อ {
-          color: #6e6e6e;
+        color: #6e6e6e;
       }
       .status-กำลังดำเนินการ {
-          color: #4E8CFF;
+        color: #4e8cff;
       }
       .status-กำลังจัดส่ง {
-          color: #4169E1;
+        color: #4169e1;
       }
       .status-กำลังนำส่ง {
-          color: #FF7043;
+        color: #ff7043;
       }
       .status-จัดส่งเรียบร้อย {
-          color: #009900;
+        color: #009900;
       }
     </style>
     <nav class="navbar navbar-expand-lg navbar-dark">
@@ -170,7 +170,7 @@
         async function fetchOrders() {
           try {
             const response = await fetch(
-              `/api/orders/user/${userEmail}`
+              `http://localhost:5001/api/orders/user/${userEmail}`
             );
             if (!response.ok) throw new Error("Network response was not ok");
             const orders = await response.json();
@@ -187,66 +187,77 @@
 
           orders.forEach((order) => {
             const statusClasses = {
-              "ได้รับคำสั่งซื้อ": "status-ได้รับคำสั่งซื้อ",
-              "กำลังดำเนินการ": "status-กำลังดำเนินการ",
-              "กำลังจัดส่ง": "status-กำลังจัดส่ง",
-              "กำลังนำส่ง": "status-กำลังนำส่ง",
-              "จัดส่งเรียบร้อย": "status-จัดส่งเรียบร้อย",
+              ได้รับคำสั่งซื้อ: "status-ได้รับคำสั่งซื้อ",
+              ตรวจสอบไฟล์งาน: "status-ตรวจสอบไฟล์งาน",
+              ตรวจสอบการโอนเงิน: "status-ตรวจสอบการโอนเงิน",
+              กำลังดำเนินการ: "status-กำลังดำเนินการ",
+              กำลังจัดส่ง: "status-กำลังจัดส่ง",
+              กำลังนำส่ง: "status-กำลังนำส่ง",
+              จัดส่งเรียบร้อย: "status-จัดส่งเรียบร้อย",
             };
             const statusClass = statusClasses[order.status.trim()] || "";
 
-
-            
             const stepper = document.createElement("div");
             stepper.classList.add("accordion");
 
             const orderStatusStep = `<div class="accordion-item" style="margin-bottom: 10px">
-                                  <h2 class="accordion-header" id="heading${
-                                    order._id
-                                  }">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${
-                                      order._id
-                                    }" aria-expanded="true" aria-controls="collapse${
+                              <h2 class="accordion-header" id="heading${
+                                order._id
+                              }">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${
+                                  order._id
+                                }" aria-expanded="true" aria-controls="collapse${
               order._id
             }">
-                                      Order ID: ${order._id}
-                                    </button>
-                                  </h2>
-                                  <div id="collapse${
-                                    order._id
-                                  }" class="accordion-collapse collapse show" aria-labelledby="heading${
+                                  Order ID: ${order._id}
+                                </button>
+                              </h2>
+                              <div id="collapse${
+                                order._id
+                              }" class="accordion-collapse collapse show" aria-labelledby="heading${
               order._id
             }" data-bs-parent="#orders-container">
-                                    <div class="accordion-body">
-                                      <p>สถานะ : <strong class="status ${statusClass}" >${
-                                        order.status
-                                      }</strong></p>
-                                      <ul>
-                                        ${order.items
-                                          .map(
-                                            (item) => `
-                                          <li>สินค้า : ${item.productName}, ขนาด : ${item.size}, ความหนา : ${item.thickness}</li>
-                                           <li>จำนวน: ${item.quantity} ชิ้น, ราคาต่อชิ้น: ${item.price} บาท</li>
-                                        `
-                                          )
-                                          .join("")}
-                                      </ul>
-                                      <p>ราคารวม : ${order.totalPrice} บาท</p>
-                                      <div class="button-container text-end">
-                                        <button class="btn btn-success" onclick="confirmOrder('${order._id}')">ยืนยัน</button>
-                                        <button class="btn btn-danger" onclick="cancelOrder('${order._id}')">ยกเลิก</button>
-                                      </div>
-                                    </div>
+                                <div class="accordion-body">
+                                  <p>สถานะ : <strong class="status ${statusClass}">${
+              order.status
+            }</strong></p>
+                                  <ul>
+                                    ${order.items
+                                      .map(
+                                        (item) => `
+                                      <li>สินค้า : ${item.productName}, ขนาด : ${item.size}, ความหนา : ${item.thickness}</li>
+                                       <li>จำนวน: ${item.quantity} ชิ้น, ราคาต่อชิ้น: ${item.price} บาท</li>
+                                    `
+                                      )
+                                      .join("")}
+                                  </ul>
+                                  <p>ราคาสินค้า : ${order.totalPrice} บาท</p>
+                                  <p>ราคาประเมิน : ${
+                                    order.estimatedPrice
+                                  } บาท</p>
+                                  <p>ราคารวม : ${order.netPrice} บาท</p>
+                                  <div class="button-container text-end">
+                                    ${
+                                      order.status === "ตรวจสอบไฟล์งาน"
+                                        ? `<button class="btn btn-success" onclick="confirmOrder('${order._id}')">ยืนยัน</button>`
+                                        : ""
+                                    }
                                   </div>
-                                </div>`;
+                                </div>
+                              </div>
+                            </div>`;
 
             stepper.innerHTML = orderStatusStep;
             ordersContainer.appendChild(stepper);
           });
         }
-
         fetchOrders();
       });
+
+      function confirmOrder(orderId) {
+        localStorage.setItem("orderId", orderId);
+        window.location.href = "money.html";
+      }
 
       document
         .getElementById("logout-button")

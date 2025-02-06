@@ -403,8 +403,77 @@
         //     }
         //   });
         // });
+        // preorderForm.addEventListener("submit", async (e) => {
+        //   e.preventDefault();
+        //   const name = document.getElementById("name").value;
+        //   const email = document.getElementById("email").value;
+        //   const phone = document.getElementById("phone").value;
+        //   const materialId = document.getElementById("material").value;
+        //   const quantity = document.getElementById("quantity").value;
+        //   const notes = document.getElementById("notes").value;
+        //   const address = document.getElementById("address").value;
+        //   const paymentMethod = document.getElementById("payment").value;
+
+        //   const aiFileInput = document.getElementById("aiFile");
+        //   const aiFile = aiFileInput.files[0];
+
+        //   console.log(aiFile);
+
+        //   const selectedMaterial = materials.find(
+        //     (material) => material._id === materialId
+        //   );
+        //   const totalPrice = selectedMaterial.price * quantity;
+        //   orderTotalPriceSpan.textContent = totalPrice;
+
+        //   confirmationModal.show();
+
+        //   confirmOrderButton.addEventListener("click", async () => {
+        //     const orderData = {
+        //       name,
+        //       email,
+        //       phone,
+        //       materialId,
+        //       quantity,
+        //       notes,
+        //       address,
+        //       paymentMethod,
+        //     };
+
+        //     const formData = new FormData();
+        //     formData.append("orderData", JSON.stringify(orderData));
+        //     if (aiFile) {
+        //       formData.append("aiFile", aiFile);
+        //     }
+
+        //     try {
+        //       const orderResponse = await fetch(
+        //         "http://localhost:5001/api/orders",
+        //         {
+        //           method: "POST",
+        //           body: formData,
+        //         }
+        //       );
+
+        //       if (!orderResponse.ok) throw new Error("Failed to create order.");
+        //       const responseData = await orderResponse.json();
+        //       const orderId = responseData.order._id;
+
+        //       localStorage.setItem("orderId", orderId);
+        //       console.log(responseData);
+
+        //       alert("คำสั่งทำสำเร็จ!");
+        //       confirmationModal.hide();
+        //       window.location.href = "money.html";
+        //     } catch (error) {
+        //       console.error("Error submitting order:", error);
+        //       alert("เกิดข้อผิดพลาดในการสั่งทำ");
+        //       confirmationModal.hide();
+        //     }
+        //   });
+        // });
         preorderForm.addEventListener("submit", async (e) => {
           e.preventDefault();
+
           const name = document.getElementById("name").value;
           const email = document.getElementById("email").value;
           const phone = document.getElementById("phone").value;
@@ -417,11 +486,16 @@
           const aiFileInput = document.getElementById("aiFile");
           const aiFile = aiFileInput.files[0];
 
-          console.log(aiFile);
+          console.log("Selected AI File:", aiFile);
 
           const selectedMaterial = materials.find(
             (material) => material._id === materialId
           );
+          if (!selectedMaterial) {
+            alert("Invalid material selected.");
+            return;
+          }
+
           const totalPrice = selectedMaterial.price * quantity;
           orderTotalPriceSpan.textContent = totalPrice;
 
@@ -441,6 +515,7 @@
 
             const formData = new FormData();
             formData.append("orderData", JSON.stringify(orderData));
+
             if (aiFile) {
               formData.append("aiFile", aiFile);
             }
@@ -454,16 +529,19 @@
                 }
               );
 
-              if (!orderResponse.ok) throw new Error("Failed to create order.");
+              if (!orderResponse.ok) {
+                throw new Error("Failed to create order.");
+              }
+
               const responseData = await orderResponse.json();
               const orderId = responseData.order._id;
 
               localStorage.setItem("orderId", orderId);
-              console.log(responseData);
+              console.log("Order Created:", responseData);
 
               alert("คำสั่งทำสำเร็จ!");
               confirmationModal.hide();
-              window.location.href = "money.html";
+              window.location.href = "check-order.html";
             } catch (error) {
               console.error("Error submitting order:", error);
               alert("เกิดข้อผิดพลาดในการสั่งทำ");

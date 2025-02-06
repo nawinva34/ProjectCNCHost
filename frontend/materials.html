@@ -148,7 +148,7 @@
 
         async function fetchMaterials() {
           try {
-            const response = await fetch("/api/materials");
+            const response = await fetch("http://localhost:5001/api/materials");
             if (!response.ok) throw new Error("Network response was not ok");
             const materials = await response.json();
             displayMaterials(materials);

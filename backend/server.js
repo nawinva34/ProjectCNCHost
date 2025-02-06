@@ -16,8 +16,13 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // การเชื่อมต่อ MongoDB
+// mongoose
+//   .connect("mongodb+srv://project:123456_Parn@projectcnc.8ljbk.mongodb.net/", {})
+//   .then(() => console.log("Connected to MongoDB"))
+//   .catch((err) => console.error("MongoDB connection error:", err));
+const mongoURI = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
 mongoose
-  .connect("mongodb+srv://project:123456_Parn@projectcnc.8ljbk.mongodb.net/", {})
+  .connect(mongoURI)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -59,10 +64,23 @@ const OrderSchema = new mongoose.Schema(
       },
     ],
     totalPrice: { type: Number, required: true },
+    estimatedPrice: { type: Number, default: 0 },
+    netPrice: { type: Number, default: 0 },
+    aiFile: { type: String, required: false },
+    paymentSlip: { type: String, required: false },
+
     status: {
       type: String,
       default: "ได้รับคำสั่งซื้อ",
-      enum: ["ได้รับคำสั่งซื้อ", "กำลังดำเนินการ", "กำลังจัดส่ง", "กำลังนำส่ง", "จัดส่งเรียบร้อย"], // Optional: enum for stricter validation
+      enum: [
+        "ได้รับคำสั่งซื้อ",
+        "ตรวจสอบไฟล์งาน",
+        "ตรวจสอบการโอนเงิน",
+        "กำลังดำเนินการ",
+        "กำลังจัดส่ง",
+        "กำลังนำส่ง",
+        "จัดส่งเรียบร้อย",
+      ],
     },
   },
   { timestamps: true }
@@ -306,103 +324,43 @@ app.delete("/api/materials/:id", async (req, res) => {
 });
 
 // Order Create API
-// app.post("/api/orders", async (req, res) => {
-//   const { materialId, name, email, phone, quantity, notes, address } = req.body;
-
-//   const material = await Material.findById(materialId);
-
-//   if (!material) {
-//     return res.status(400).json({ message: "Invalid material ID" });
-//   }
-
-//   if (!name || !phone || quantity <= 0) {
-//     return res.status(400).json({
-//       message: "All fields are required, and quantity must be greater than zero.",
-//     });
-//   }
-
-//   const totalPrice = material.price * quantity;
-
-//   const newOrder = new Order({
-//     items: [
-//       {
-//         productId: material._id,
-//         productName: material.name,
-//         size: material.size,
-//         thickness: material.thickness,
-//         quantity: quantity,
-//         price: material.price,
-//       },
-//     ],
-//     userDetails: [
-//       {
-//         Username: name,
-//         UserEmail: email,
-//         UserPhone: phone,
-//         UserNotes: notes,
-//         UserAddress: address,
-//       },
-//     ],
-//     totalPrice: totalPrice,
-//   });
-
-//   try {
-//     await newOrder.save();
-//     res.status(201).json({ message: "Order created successfully!", order: newOrder });
-//   } catch (error) {
-//     console.error("Order creation error:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-app.post("/api/orders", upload.single('aiFile'), async (req, res) => {
-  const { materialId, name, email, phone, quantity, notes, address } = req.body;
-
-
-  const aiFile = req.file;
-
-  if (!aiFile) {
-    return res.status(400).json({ message: "No .ai file uploaded." });
-  }
-
-  const material = await Material.findById(materialId);
-
-  if (!material) {
-    return res.status(400).json({ message: "Invalid material ID" });
-  }
-
-  if (!name || !phone || quantity <= 0) {
-    return res.status(400).json({
-      message: "All fields are required, and quantity must be greater than zero.",
-    });
-  }
-
-  const totalPrice = material.price * quantity;
-
-  const newOrder = new Order({
-    items: [
-      {
-        productId: material._id,
-        productName: material.name,
-        size: material.size,
-        thickness: material.thickness,
-        quantity: quantity,
-        price: material.price,
-      },
-    ],
-    userDetails: [
-      {
-        Username: name,
-        UserEmail: email,
-        UserPhone: phone,
-        UserNotes: notes,
-        UserAddress: address,
-      },
-    ],
-    totalPrice: totalPrice,
-    aiFilePath: aiFile.path,
-  });
-
+app.post("/api/orders", upload.single("aiFile"), async (req, res) => {
   try {
+    const orderData = JSON.parse(req.body.orderData);
+    const { materialId, name, email, phone, quantity, notes, address, paymentMethod } = orderData;
+
+    const material = await Material.findById(materialId);
+    if (!material) {
+      return res.status(400).json({ message: "Invalid material ID" });
+    }
+
+    const totalPrice = material.price * quantity;
+
+    const newOrder = new Order({
+      items: [
+        {
+          productId: material._id,
+          productName: material.name,
+          size: material.size,
+          thickness: material.thickness,
+          quantity: quantity,
+          price: material.price,
+        },
+      ],
+      userDetails: [
+        {
+          Username: name,
+          UserEmail: email,
+          UserPhone: phone,
+          UserNotes: notes,
+          UserAddress: address,
+          PaymentMethod: paymentMethod,
+        },
+      ],
+      totalPrice: totalPrice,
+      aiFile: req.file ? req.file.path : null,
+    });
+
     await newOrder.save();
     res.status(201).json({ message: "Order created successfully!", order: newOrder });
   } catch (error) {
@@ -464,9 +422,10 @@ app.put("/api/orders/:orderId/status", async (req, res) => {
   const { status } = req.body;
   const { orderId } = req.params;
 
-  // Validate the provided status
   const validStatuses = [
     "ได้รับคำสั่งซื้อ",
+    "ตรวจสอบไฟล์งาน",
+    "ตรวจสอบการโอนเงิน",
     "กำลังดำเนินการ",
     "กำลังจัดส่ง",
     "กำลังนำส่ง",
@@ -493,6 +452,67 @@ app.put("/api/orders/:orderId/status", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+app.put("/api/orders/:orderId/price", async (req, res) => {
+  const { orderId } = req.params;
+  const { estimatedPrice } = req.body;
+
+  if (isNaN(estimatedPrice) || estimatedPrice < 0) {
+    return res.status(400).json({ message: "Invalid estimated price" });
+  }
+
+  try {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    order.estimatedPrice = estimatedPrice;
+    order.netPrice = order.totalPrice + estimatedPrice
+
+    await order.save();
+
+    res.status(200).json({ message: "Estimated price updated successfully", order });
+  } catch (error) {
+    console.error("Error updating estimated price:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/api/orders/upload-slip/:orderId", upload.single("paymentSlip"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "No file uploaded." });
+  }
+
+  try {
+    const filePath = path.join("uploads", req.file.filename);
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.orderId,
+      { paymentSlip: filePath },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found." });
+    }
+
+    order.status = "ตรวจสอบการโอนเงิน";
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Payment slip uploaded and status updated successfully.",
+      order,
+    });
+  } catch (error) {
+    console.error("Error uploading payment slip:", error);
+    res.status(500).json({ success: false, message: "Server error." });
+  }
+});
+
+
 
 // Create Promotion
 app.post("/api/promotions", upload.single("image"), async (req, res) => {
@@ -668,7 +688,7 @@ app.delete('/api/gallery/:id', async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 // เสิร์ฟไฟล์ static จากโฟลเดอร์ frontend
-app.use(express.static(path.resolve(__dirname, '..', 'frontend')));
+// app.use(express.static(path.resolve(__dirname, '..', 'frontend')));
 
 // เสิร์ฟไฟล์ promotion.html เมื่อเข้าถึง path '/'
 app.get('/', (req, res) => {

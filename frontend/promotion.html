@@ -224,7 +224,7 @@
         async function fetchPromotions() {
           try {
             const response = await fetch(
-              "/api/promotions"
+              "http://localhost:5001/api/promotions"
             );
             if (!response.ok) throw new Error("Network response was not ok");
             const promotions = await response.json();

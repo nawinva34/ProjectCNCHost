@@ -191,7 +191,7 @@
     </div>
 
     <div class="container mt-5">
-      <div style="text-align: right;">
+      <div style="text-align: right">
         <button
           type="button"
           class="btn btn-primary mb-4"
@@ -248,7 +248,7 @@
                     accept="image/*"
                   />
                 </div>
-                <div style="text-align: right;">
+                <div style="text-align: right">
                   <button type="submit" class="btn btn-primary btn-success">
                     บันทึกโปรโมชั่น
                   </button>
@@ -271,7 +271,7 @@
         async function fetchPromotions() {
           try {
             const response = await fetch(
-              "/api/promotions"
+              "http://localhost:5001/api/promotions"
             );
             if (!response.ok) throw new Error("Network response was not ok");
             const promotions = await response.json();
@@ -318,8 +318,8 @@
 
           const method = promotionId ? "PUT" : "POST";
           const url = promotionId
-            ? `/api/promotions/${promotionId}`
-            : "/api/promotions";
+            ? `http://localhost:5001/api/promotions/${promotionId}`
+            : "http://localhost:5001/api/promotions";
 
           try {
             const response = await fetch(url, {
@@ -341,7 +341,7 @@
         window.editPromotion = async function (id) {
           try {
             const response = await fetch(
-              `/api/promotions/${id}`
+              `http://localhost:5001/api/promotions/${id}`
             );
             if (!response.ok) throw new Error("Failed to fetch promotion");
 
@@ -365,7 +365,7 @@
 
           try {
             const response = await fetch(
-              `/api/promotions/${id}`,
+              `http://localhost:5001/api/promotions/${id}`,
               { method: "DELETE" }
             );
             if (!response.ok) throw new Error("Failed to delete promotion");
